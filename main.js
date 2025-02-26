@@ -68,14 +68,14 @@ function clientWindow() {
         client = new BrowserWindow({
             width: 1010,
             height: 720,
-            //
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             resizable: false,
             parent: main,
             modal: true
         })
     }
   client.loadFile('./src/views/cliente.html')
+  client.center()
 }
 
 // Janela OS
@@ -87,13 +87,14 @@ function osWindow() {
         OS = new BrowserWindow({
             width: 1010,
             height: 720,
-            autoHideMenuBar: true,
+            //autoHideMenuBar: true,
             resizable: false,
             parent: main,
             modal: true
         })
     }
   OS.loadFile('./src/views/os.html')
+  OS.center()
 }
 
 // Iniciar a aplicação
