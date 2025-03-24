@@ -51,7 +51,7 @@
                <!-- CEP -->
             <div class="col-md-2">
                 <label for="inputCEPClient" class="form-label">CEP</label>
-                <input type="text" class="form-control" id="inputCEPClient" spellcheck="false" maxlength="15" required>
+                <input type="text" class="form-control" id="inputCEPClient" spellcheck="false" maxlength="15" required onblur="buscarCEP()">
                </div>
 
                <!-- Logradouro -->
@@ -131,5 +131,7 @@
     </div>
     <!-- Bootstrap -->
     <script src="../public/js/bootstrap.min.js"></script>
+    <!-- renderizador -->
+     <script src="rendererCliente.js"></script>
 </body>
 </html>
