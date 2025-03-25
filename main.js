@@ -6,7 +6,8 @@ const path = require('node:path')
 
 // Importação dos métodos conectar e desconectar (modulo de conexão)
 const {conectar, desconectar} = require('./database.js')
-const { set } = require('mongoose')
+
+const clienteModel = require('./src/models/Clientes.js')
 
 // Janela principal
 let win
@@ -38,6 +39,7 @@ const createWindow = () => {
     ipcMain.on('os-window', () => {
       osWindow()
     })
+
 }
 
 // Janela sobre
@@ -214,3 +216,33 @@ const template = [
         ]
     }
 ]
+
+//===============================================================
+    // == Clientes - CRUD Create
+    // recebimento do objeto que contem os dados do cliente
+    ipcMain.on('new-client', async (event, client) => {
+        // Importante! Teste de recebimento dos dados do cliente
+        console.log(client)
+        try {
+            // criar uma nova de estrutura de dados usando a classe modelo.
+            // Atenção! Os atributos precisam ser identificados ao modelo de dados Cliente.js e os valores são definidos pelo
+            // conteúdo de objeto
+            const newClient = new clientWindow({
+                nomeCliente: client.nameCli,
+                cpfCliente: client.cpfCli,
+                emailCliente: client.emailCli,
+                foneCliente: client.foneCli,
+                cepCliente: client.cepCli,
+                logradouroCliente: client.logradouroCli,
+                numeroCliente: client.numeroCli,
+                complementoCliente: client.complementCli,
+                bairroCliente: client.bairroCli,
+                cidadeCliente: client.cidadeCli,
+                ufCliente: client.ufCli
+            })
+            // salvar os dados do cliente no banco de dados
+            await newClient.save()
+        } catch (error) {
+            console.log(error)
+        }
+    })
