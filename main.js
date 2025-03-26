@@ -2,12 +2,14 @@ console.log("Processo principal")
 
 const { app, BrowserWindow, nativeTheme, Menu, ipcMain } = require('electron')
 
+// Esta linha está relacionada ao preload.js
 const path = require('node:path')
 
 // Importação dos métodos conectar e desconectar (modulo de conexão)
 const {conectar, desconectar} = require('./database.js')
 
-const clienteModel = require('./src/models/Clientes.js')
+// Importação do Schema Clientes da camada model
+const clientModel = require('./src/models/Clientes.js')
 
 // Janela principal
 let win
@@ -30,16 +32,6 @@ const createWindow = () => {
     Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
     win.loadFile('./src/views/index.html')
-
-    // recebimento dos pedidos do renderizador para abertura de janelas (botões)
-    ipcMain.on('client-window', () => {
-      clientWindow()
-    })
-
-    ipcMain.on('os-window', () => {
-      osWindow()
-    })
-
 }
 
 // Janela sobre
@@ -77,7 +69,10 @@ function clientWindow() {
             //autoHideMenuBar: true,
             resizable: false,
             parent: main,
-            modal: true
+            modal: true,
+            webPreferences: {
+                preload: path.join(__dirname, 'preload.js')
+              }
         })
     }
   client.loadFile('./src/views/cliente.html')
@@ -217,32 +212,44 @@ const template = [
     }
 ]
 
+// recebimento dos pedidos do renderizador para abertura de janelas (botões) autorizado no preload.js
+ipcMain.on('client-window', () => {
+    clientWindow()
+  })
+
+  ipcMain.on('os-window', () => {
+    osWindow()
+  })
+
 //===============================================================
     // == Clientes - CRUD Create
     // recebimento do objeto que contem os dados do cliente
-    ipcMain.on('new-client', async (event, client) => {
+ipcMain.on('new-client', async (event, client) => {
         // Importante! Teste de recebimento dos dados do cliente
-        console.log(client)
-        try {
-            // criar uma nova de estrutura de dados usando a classe modelo.
-            // Atenção! Os atributos precisam ser identificados ao modelo de dados Cliente.js e os valores são definidos pelo
-            // conteúdo de objeto
-            const newClient = new clientWindow({
-                nomeCliente: client.nameCli,
-                cpfCliente: client.cpfCli,
-                emailCliente: client.emailCli,
-                foneCliente: client.foneCli,
-                cepCliente: client.cepCli,
-                logradouroCliente: client.logradouroCli,
-                numeroCliente: client.numeroCli,
-                complementoCliente: client.complementCli,
-                bairroCliente: client.bairroCli,
-                cidadeCliente: client.cidadeCli,
-                ufCliente: client.ufCli
-            })
+    console.log(client)
+    try {
+        // criar uma nova de estrutura de dados usando a classe modelo.
+        // Atenção! Os atributos precisam ser identificados ao modelo de dados Cliente.js e os valores são definidos pelo
+        // conteúdo de objeto
+        const newClient = new clientModel({
+            nomeCliente: client.nameCli,
+            cpfCliente: client.cpfCli,
+            emailCliente: client.emailCli,
+            foneCliente: client.foneCli,
+            cepCliente: client.cepCli,
+            logradouroCliente: client.logradouroCli,
+            numeroCliente: client.numeroCli,
+            complementoCliente: client.complementCli,
+            bairroCliente: client.bairroCli,
+            cidadeCliente: client.cidadeCli,
+            ufCliente: client.ufCli
+        })
             // salvar os dados do cliente no banco de dados
-            await newClient.save()
-        } catch (error) {
+        await newClient.save()
+    } catch (error) {
             console.log(error)
         }
     })
+
+// == Fim - Clientes - CRUD Create
+// ============================================================

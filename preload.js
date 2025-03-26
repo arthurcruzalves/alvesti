@@ -14,9 +14,5 @@ contextBridge.exposeInMainWorld('api', {
     clientWindow: () => ipcRenderer.send('client-window'),
     osWindow: () => ipcRenderer.send('os-window'),
     dbStatus: (message) => ipcRenderer.on('db-status', message),
-    newClient:(client) => ipcRenderer.send('new-client', client)
+    newClient: (client) => ipcRenderer.send('new-client', client)
 })
-
-function dbStatus(message) {
-    ipcRenderer.on('db-status', message)
-}
