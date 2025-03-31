@@ -1,6 +1,6 @@
 console.log("Processo principal")
 
-const { app, BrowserWindow, nativeTheme, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow, nativeTheme, Menu, ipcMain, dialog, shell } = require('electron')
 
 // Esta linha está relacionada ao preload.js
 const path = require('node:path')
@@ -10,6 +10,11 @@ const {conectar, desconectar} = require('./database.js')
 
 // Importação do Schema Clientes da camada model
 const clientModel = require('./src/models/Clientes.js')
+
+// Importação do pacote jspdf (npm i jspdf)
+const { jspdf, default: jsPDF} = require('jspdf')
+
+// Importação da biblioteca fs (nativa do JavaScript) para manipulação de arquivos (no caso arquivos)
 
 // Janela principal
 let win
@@ -163,7 +168,8 @@ const template = [
         label: 'Relatórios',
         submenu: [
             {
-                label: 'Clientes'
+                label: 'Clientes',
+                click: () =>  relatorioClientes()
             },
             {
                 label: 'OS abertas'
@@ -246,10 +252,81 @@ ipcMain.on('new-client', async (event, client) => {
         })
             // salvar os dados do cliente no banco de dados
         await newClient.save()
+        // Mensagem de confirmação
+        /*dialog.showMessageBox({
+            //customização
+            type: 'info',
+            title: "Aviso",
+            message: "Cliente adicionado com sucesso",
+            buttons: ['OK']
+        }).then((result) => {
+            //ação ao pressionar o botão
+            if(result.response === 0) {
+                // enviar um pedido para o renderizador limpar os campos e resetar as configurações
+                // pré definidos 
+                event.reply('reset-form')
+            }
+        })*/
     } catch (error) {
+        // se o codigo de erro for 11000 (cpf duplicado) enviar uma menssagem ao usuario
+        if(error.code === 11000) {
+            dialog.showMessageBox({
+                type: 'error',
+                title: "Atenção",
+                message: "CPF já está cadastrado\nVerifique se digitou corretamente",
+                buttons:['OK']
+            }).then((result) => {
+                if (result.response === 0 ){
+                    // limpar a caixa de input do cpf, focar esta caixa e deixar a borda em vermelho
+                }
+            })
+        }
             console.log(error)
         }
     })
 
 // == Fim - Clientes - CRUD Create
 // ============================================================
+
+
+// ============================================================
+// == Relatórios de clientes ==================================
+
+async function relatorioClientes() {
+    try {
+        // Passo 1:
+        const clientes = await clientModel.find().sort({nomeCliente:1})
+        //teste de recebimento da listagem de cliente
+        //console.log(clientes)
+        //Passo 2: Formação do documento pdf
+        // p - portrait | l - landscape | mm e a4 (folha)
+        const doc = new jsPDF('p', 'mm', 'a4')
+        // definir o tamanho da fonte (tamanho equivalente ao word)
+        doc.setFontSize(16)
+        // escrever um texto (título)
+        doc.text("Relatório de clientes", 14, 20)//x, y (mm)
+        // ...
+        const dataAtual = new Date().toLocaleDateString('pt-BR')
+        doc.setFontSize(12)
+        doc.text(`Data: ${dataAtual}`, 160, 10)
+        //
+        doc.text()
+        doc.text()
+        doc.text()
+        y += 5
+        //
+        doc.setLineWidth
+
+        //Definir o caminho do arquivo temporario
+        const tempDir = app.getPath('temp')
+        const filePath = path.join(tempDir, 'clientes.pdf')
+        // salvar temporariamente o arquivo
+        doc.save(filePath)
+        // abrir o arquivo no aplicativo padrão de leitura de pdf do computador do usuario
+        shell.openPath(filePath) 
+        // abrir o arquivo rio aplicativo padrão de leitura de pdf do computador
+        console.log(clientes)
+    } catch (error) {
+        console.log(error)
+    }    
+}
