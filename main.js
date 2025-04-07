@@ -288,7 +288,6 @@ ipcMain.on('new-client', async (event, client) => {
 // ============================================================
 
 
-// ============================================================
 // == Relatório de clientes ===================================
 
 async function relatorioClientes() {
@@ -328,8 +327,7 @@ async function relatorioClientes() {
         y += 10 // espaçamento da linha
         // percorrer o vetor clientes(obtido do banco) usando o laço forEach (equivale ao laço for)
         clientes.forEach((c) => {
-            // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamnaho da folha)
-            // folha A4 y = 297mm
+            // adicionar outra página se a folha inteira for preenchida (estratégia é saber o tamanho da folha)
             if (y > 280) {
                 doc.addPage()
                 y = 20 // resetar a variável y
@@ -342,11 +340,15 @@ async function relatorioClientes() {
                 doc.line(10, y, 200, y)
                 y += 10
             }
-            doc.text(c.nomeCliente, 14, y),
-                doc.text(c.foneCliente, 80, y),
-                doc.text(c.emailCliente || "N/A", 130, y)
-            y += 10 //quebra de linha
+            
+            // Garantir que os dados existem antes de chamar `text`
+            doc.text(c.nomeCliente || "Nome não informado", 14, y);
+            doc.text(c.foneCliente || "Telefone não informado", 80, y);
+            doc.text(c.emailCliente || "N/A", 130, y);
+            
+            y += 10 // quebra de linha
         })
+        
 
         // Adicionar numeração automática de páginas
         const paginas = doc.internal.getNumberOfPages()

@@ -18,10 +18,11 @@
   },
   "homepage": "https://github.com/arthurcruzalves/alvesti#readme",
   "devDependencies": {
-    "electron": "^34.2.0"
+    "electron": "^34.5.0"
   },
   "dependencies": {
     "jspdf": "^3.0.1",
-    "mongoose": "^8.12.2"
+    "mongoose": "^8.13.2",
+    "nodemon": "^3.1.9"
   }
 }
