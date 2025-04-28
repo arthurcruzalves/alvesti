@@ -18,6 +18,11 @@
     margin-left: 10px;
 }
 
+/* ocultar o campo id do cliente */
+#idClient {
+    display: none;
+}
+
 /* rodapé */ 
 footer {
     background-color: rgb(35, 22, 218);

@@ -62,7 +62,8 @@ let complementClient = document.getElementById('inputComplementClient')
 let bairroClient = document.getElementById('inputNeighborhoodClient')
 let cityClient = document.getElementById('inputCityClient')
 let ufClient = document.getElementById('inputUFClient')
-
+// captura do id do cliente (usado no delete e update)
+let id = document.getElementById('idClient')
 
 // ==========================================================
 // == Manipulação da tecla Enter ============================
@@ -154,6 +155,7 @@ function buscarCliente() {
             arrayClient = dadosClientes
             // extrair os dados do cliente
             arrayClient.forEach((c) =>{
+                id.value = c._id,
                 nameClient.value = c.nomeCliente,
                 cpfClient.value = c.cpfCliente,
                 emailClient.value = c.emailCliente,
@@ -165,6 +167,12 @@ function buscarCliente() {
                 bairroClient.value = c.bairroCliente,
                 cityClient.value = c.cidadeCliente,
                 ufClient.value = c.ufCliente
+                // bloqueio do botão adicionar
+                btnCreate.disabled = true
+                // desbloqueio dos botões editar e excluir
+                btnUpdate.disabled = false
+                btnDelete.disabled = false
+
             })
         })
     }
@@ -227,3 +235,16 @@ api.resetForm((args) => {
 
 // == Fim - reset form ===============================================
 // ===================================================================
+
+// ===================================================================
+// CRUD Delete =======================================================
+
+function excluirCliente(){
+    console.log(id.value)// Passo 1: receber do form o id
+    api.deleteClient(id.value) // Passo 2: (enviar )
+}
+
+// Fim do CRUD Delete ================================================
+// ==================================================================
+
+
