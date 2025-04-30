@@ -447,7 +447,7 @@ ipcMain.on('delete-client', async (event, id) => {
         // client é o nome da variavel que responde a janela
         const {response} = await dialog.showMessageBox(client, {
             type: 'warning',
-            title: "Ateção!",
+            title: "Atenção!",
             message: "Deseja excluir esse cliente?\nEsta ação não poderá ser desfeita.",
             buttons:['Cancelar', 'Excluir'] //[0, 1]
         })
@@ -465,3 +465,52 @@ ipcMain.on('delete-client', async (event, id) => {
 // Fim do CRUD Delete ================================================
 // ==================================================================
 
+// ===================================================================
+// CRUD Update =======================================================
+
+ipcMain.on('update-client', async (event, client) => {
+    console.log(client) //teste
+    try {
+            // criar uma nova de estrutura de dados usando a classe modelo. Atenção! Os atributos precisam ser idênticos ao modelo de dados Clientes.js e os valores são definidos pelo conteúdo do objeto cliente
+            const updateClient = await clientModel.findByIdAndUpdate(
+                client.idCli,
+                {
+                nomeCliente: client.nameCli,
+                cpfCliente: client.cpfCli,
+                emailCliente: client.emailCli,
+                foneCliente: client.phoneCli,
+                cepCliente: client.cepCli,
+                logradouroCliente: client.addressCli,
+                numeroCliente: client.numberCli,
+                complementoCliente: client.complementCli,
+                bairroCliente: client.neighborhoodCli,
+                cidadeCliente: client.cityCli,
+                ufCliente: client.ufCli
+                },
+                {
+                    new: true
+                }
+        )
+        // Mensagem de confirmação
+        dialog.showMessageBox({
+            //customização
+            type: 'info',
+            title: "Aviso",
+            message: "Cliente adicionado com sucesso",
+            buttons: ['OK']
+        }).then((result) => {
+            //ação ao pressionar o botão (result = 0)
+            if (result.response === 0) {
+                //enviar um pedido para o renderizador limpar os campos e resetar as configurações pré definidas (rótulo 'reset-form' do preload.js
+                event.reply('reset-form')
+            }
+        })
+    
+    } catch (error) {
+    console.log(error)
+}
+})
+
+
+// Fim do CRUD Update ================================================
+// ==================================================================

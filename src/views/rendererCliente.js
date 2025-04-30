@@ -98,27 +98,46 @@ frmClient.addEventListener('submit', async (event) => {
     // evitar o comportamento padrão do submit que é enviar os dados do formulario e reiniciar o documento html
     event.preventDefault()
     // Teste importante (recebimento dos dados do formulario - passo 1 do fluxo)
-    console.log(nameClient.value,cpfClient.value,emailClient.value,phoneClient.value, cepClient.value, addressClient.value, numberClient.value, complementClient.value,bairroClient.value, cityClient.value, ufClient.value)
-    //console.log(nameClient.value, cpfClient.value, emailClient.value, phoneClient.value, cepClient.value, addressClient.value, numberClient.value,complementClient.value, bairroClient.value, cityClient.value, ufClient.value)
-    //Criar um objeto para armazenar os dados do cliente antes de enviar ao main 
-    
-    const client = {
-        nameCli: nameClient.value,
-        cpfCli: cpfClient.value,
-        emailCli: emailClient.value,
-        phoneCli: phoneClient.value,
-        cepCli: cepClient.value,
-        addressCli: addressClient.value,
-        numberCli: numberClient.value,
-        complementCli: complementClient.value,
-        bairroCli: bairroClient.value,
-        cityCli: cityClient.value,
-        ufCli: ufClient.value
-    }
-    // Enviar ao main o objeto client - (Passo 2: fluxo)
-    // uso do preload.js
-    api.newClient(client) 
-    
+    console.log(nameClient.value,cpfClient.value,emailClient.value,phoneClient.value, cepClient.value, addressClient.value, numberClient.value, complementClient.value,bairroClient.value, cityClient.value, ufClient.value, id.value)
+    //estrategia usada para utilizar o submit para criar um n0ovo cliente ou alterar os dados de um cliente
+    // se existir id significa que existe um cliente se não significa que é para adicionar um novo cliente
+    if(id.value ===""){
+        const client = {
+            nameCli: nameClient.value,
+            cpfCli: cpfClient.value,
+            emailCli: emailClient.value,
+            phoneCli: phoneClient.value,
+            cepCli: cepClient.value,
+            addressCli: addressClient.value,
+            numberCli: numberClient.value,
+            complementCli: complementClient.value,
+            bairroCli: bairroClient.value,
+            cityCli: cityClient.value,
+            ufCli: ufClient.value
+        }
+        // Enviar ao main o objeto client - (Passo 2: fluxo)
+        // uso do preload.js
+        api.newClient(client) 
+
+    } else {
+        // executar o metodo par alterar os dados do cliente
+        const client = {
+            idCli: id.value,
+            nameCli: nameClient.value,
+            cpfCli: cpfClient.value,
+            emailCli: emailClient.value,
+            phoneCli: phoneClient.value,
+            cepCli: cepClient.value,
+            addressCli: addressClient.value,
+            numberCli: numberClient.value,
+            complementCli: complementClient.value,
+            bairroCli: bairroClient.value,
+            cityCli: cityClient.value,
+            ufCli: ufClient.value
+        }
+        // Enviar ao main o objeto client - (Passo 2: fluxo)
+        // uso do preload.js
+    } 
 })
 
 // == Fim CRUD Create/Update =========================================
@@ -194,26 +213,6 @@ api.setClient((args) => {
     nameClient.value = campoBusca
 })
 
-
-
-if (/^\d{11}$/.test(campoBusca)) {
-    console.log("CPF sem formatação")
-    cpfClient.focus()
-    foco.value = ""
-    cpfClient.value = campoBusca
-} 
-else if (/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(campoBusca)) {
-    console.log("CPF com formatação")
-    cpfClient.focus()
-    foco.value = ""
-    cpfClient.value = campoBusca
-}
-else {
-    console.log("Nome")
-    nameClient.focus()
-    foco.value = ""
-    nameClient.value = campoBusca
-}
 
 
 
